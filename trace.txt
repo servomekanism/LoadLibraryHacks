@@ -1,10 +1,4 @@
 
-C:\@>BEGIN{/*   2>NUL 
-
-C:\@>dtrace -w -q -yc:\symbols -xstrsize=256 -xdynvarsize=512m -xbufsize=1024m -xswitchrate=10000hz -s dg.bat cmd.exe 
-
-C:\@>"C:\Program Files\DTrace\dtrace.exe"  -w -q -yc:\symbols -xstrsize=256 -xdynvarsize=512m -xbufsize=1024m -xswitchrate=10000hz -s dg.bat cmd.exe 
-Started up
 struct NtAllocateVirtualMemoryCALL {
     BOOL syscallEntered = true
     PEPROCESS EPROCESS = 0xffffc083e93e70c0
