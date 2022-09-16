@@ -2953,9 +2953,7 @@ inline void* GETOBJ[ string obj ] = offsets[ probefunc, obj ] ? (void*) (((uintp
 inline INBUF GET_PINBUF[ uint64_t addr ] = *(INBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(INLEN*) GETOBJ[ "INLEN" ], sizeof(INLEN) ];
 inline OUTBUF GET_POUTBUF[ uint64_t addr ] = *(OUTBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(OUTLEN*)GETOBJ[ "OUTLEN" ], sizeof(OUTLEN) ];
 inline uint8_t static_trigger_conditions = ( pid != $pid && execname != "conhost.exe" && execname != "tee.exe" );
-inline uint8_t trigger_arg_is_pid[string arguments] = ( pid == strtoll( $$1) ) ;
-inline uint8_t trigger_arg_is_execname[string arguments] = (strlen(strstr(arguments,"."))) ? (tolower(execname) == tolower(arguments)) : ( pid == strtoll( $$1) ) ;
-inline uint8_t trigger_conditions = static_trigger_conditions && ( !a1int ? (tolower(execname) == tolower( a1str)) : ( pid == a1int )) ;
+inline uint8_t trigger_conditions = static_trigger_conditions && ( !a1int ? (tolower(execname) == tolower( a1str)) : ( pid == a1int ) );
 syscall::*:return/ trigger_conditions && S.syscallEntered /
 {
     S.caller = (void*)caller;
@@ -3818,7 +3816,7 @@ syscall::NtWriteVirtualMemory:return/ trigger_conditions && S.syscallEntered /{ 
 
 inline string slashPath[ string s1 ] = strjoin( s1, ( ( s1 != "" && s1[strlen(s1)] != '\\') ? "\\" : "" ) );
 inline string pathCat[ string s1, string s2 ] = (s2 == "") ? s1 : (s1 == "") ? s2 : strjoin( slashPath[s1], s2 );
-syscall::*:return/ trigger_conditions && GETOBJ["PHANDLE"] && GETOBJ["OBJECT_ATTRIBUTES"] && !*(NTSTATUS*)GETOBJ["NTSTATUS"] && ((OBJECT_ATTRIBUTES*)GETOBJ["OBJECT_ATTRIBUTES"])->ObjectName.Length /{
+syscall::*:return/ trigger_conditions && S.syscallEntered && GETOBJ["PHANDLE"] && GETOBJ["OBJECT_ATTRIBUTES"] && !*(NTSTATUS*)GETOBJ["NTSTATUS"] && ((OBJECT_ATTRIBUTES*)GETOBJ["OBJECT_ATTRIBUTES"])->ObjectName.Length /{
    *(string*)&HandleCreatedBy[ pid, *(void**)GETOBJ["PHANDLE"] ].chars[0] = pathCat[ &((OBJECT_ATTRIBUTES*)GETOBJ["OBJECT_ATTRIBUTES"])->RootDirectory.name.chars[0] ,
                                                                                         &((OBJECT_ATTRIBUTES*)GETOBJ["OBJECT_ATTRIBUTES"])->ObjectName.Buffer.chars[0]
                                                                                     ];
