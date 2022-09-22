@@ -2950,8 +2950,8 @@ offsets["NtAcceptConnectPort",""] = offsetof( union all , NtAcceptConnectPort );
 self syscalls syscallMap[ nt`_ETHREAD* ];
 inline syscalls S = self->syscallMap[ (void*) curthread ];
 inline void* GETOBJ[ string obj ] = offsets[ probefunc, obj ] ? (void*) (((uintptr_t)&S.all + offsets[ probefunc, obj ]-1)) : (void*)0;
-inline INBUF GET_PINBUF[ uint64_t addr ] = *(INBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(INLEN*) GETOBJ[ "INLEN" ], sizeof(INLEN) ];
-inline OUTBUF GET_POUTBUF[ uint64_t addr ] = *(OUTBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(OUTLEN*)GETOBJ[ "OUTLEN" ], sizeof(OUTLEN) ];
+inline INBUF GET_PINBUF[ uint64_t addr ] = *(INBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(INLEN*) GETOBJ[ "INLEN" ], sizeof(INBUF) ];
+inline OUTBUF GET_POUTBUF[ uint64_t addr ] = *(OUTBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(OUTLEN*)GETOBJ[ "OUTLEN" ], sizeof(OUTBUF) ];
 inline uint8_t static_trigger_conditions = ( pid != $pid && execname != "conhost.exe" && execname != "tee.exe" );
 inline uint8_t trigger_conditions = static_trigger_conditions && ( !a1int ? (tolower(execname) == tolower( a1str)) : ( pid == a1int ) );
 syscall::*:return/ trigger_conditions && S.syscallEntered /
