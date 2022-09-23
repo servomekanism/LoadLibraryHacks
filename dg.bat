@@ -1,5 +1,5 @@
 BEGIN{/* 2>NUL 
-    "%ProgramFiles%\dtrace\dtrace" -w -q -yc:\symbols -xstrsize=256 -xdynvarsize=512m -xbufsize=1024m -xswitchrate=10000hz -s %0.bat %*
+    "%ProgramFiles%\dtrace\dtrace" -w -q -yc:\symbols -xstrsize=256 -xdynvarsize=512m -xbufsize=1024m -xswitchrate=100000hz -s  %~f0 %*
     @goto :EOF 
 */} 
 #pragma D option defaultargs
@@ -2952,8 +2952,8 @@ inline syscalls S = self->syscallMap[ (void*) curthread ];
 inline void* GETOBJ[ string obj ] = offsets[ probefunc, obj ] ? (void*) (((uintptr_t)&S.all + offsets[ probefunc, obj ]-1)) : (void*)0;
 inline INBUF GET_PINBUF[ uint64_t addr ] = *(INBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(INLEN*) GETOBJ[ "INLEN" ], sizeof(INBUF) ];
 inline OUTBUF GET_POUTBUF[ uint64_t addr ] = *(OUTBUF*)COPY_FROM_OFSIZE_ASSIZE[ (void*)addr, *(OUTLEN*)GETOBJ[ "OUTLEN" ], sizeof(OUTBUF) ];
-inline uint8_t static_trigger_conditions = ( pid != $pid && execname != "conhost.exe" && execname != "tee.exe" );
-inline uint8_t trigger_conditions = static_trigger_conditions && ( !a1int ? (tolower(execname) == tolower( a1str)) : ( pid == a1int ) );
+inline uint8_t static_trigger_conditions = ( (pid != $pid) && (execname != "conhost.exe") );
+inline uint8_t trigger_conditions = static_trigger_conditions && (a1int ||strlen(a1str)) ? ( !a1int ? (tolower(execname) == tolower( a1str)) : ( pid == a1int )) : true;
 syscall::*:return/ trigger_conditions && S.syscallEntered /
 {
     S.caller = (void*)caller;
